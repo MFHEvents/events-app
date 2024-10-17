@@ -1,0 +1,100 @@
+@import 'primereact/resources/themes/lara-light-indigo/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+
+@layer tailwind-base, primereact, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+/* Add any custom styles here */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.p-card {
+  padding: 1rem 1rem 1rem 1rem;
+
+  .p-card-title {
+      display: flex;
+      align-items: left;
+      justify-content: space-between;
+      margin-bottom: 0;
+      padding: 1rem 1rem 1rem 0;
+      transition: all 0.3s ease;
+  }
+
+  .p-card-body {
+      padding-top: 0;
+  }
+}
+
+.p-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Header Button Styling */
+.header-button {
+  background-color: transparent;
+  border: none;
+  color: #4C566B; /* Matching link color */
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.header-button:hover {
+  color: #beb9e4; /* Subtle color change on hover, matching link hover effect */
+  transform: translateY(-2px); /* Slight lift effect */
+}
+
+.header-button-signup {
+  background-color: #003e75;
+  border: none;
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.header-button-signup:hover {
+  background-color: #beb9e4; /* Darker blue for hover */
+  transform: translateY(-2px); /* Same hover effect */
+}
+
+/* Consistent link styling */
+.p-menuitem-link {
+  color: #4C566B; /* Same blue color */
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.p-menuitem-link:hover {
+  color: #beb9e4; /* Slightly lighter color on hover */
+  transform: translateY(-2px); /* Lift effect */
+}
+
+.p-card-button {
+  background-color: #003e75;
+  border: none;
+  color: white; /* Matching link color */
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.p-card-button:hover {
+  background-color: #beb9e4; 
+  transform: translateY(-2px);
+}

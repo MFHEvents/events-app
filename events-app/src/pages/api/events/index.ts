@@ -9,20 +9,38 @@ type Data = {
   error?: string;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-): Promise<void> {
+export default async function handler( req: NextApiRequest,res: NextApiResponse<Data>) {
   await connectToDatabase();
+  
+  switch (req.method) {
+    case 'POST':
+      try {
+        const event = new Event(req.body); // Create new event
+        await event.save();
+        return res.status(200).json({ success: true});
+      } catch (error) {
+        return res.status(500).json({ success: false, error: 'Error creating event' });
+      }
 
-  if (req.method === 'GET') {
-    try {
-      const events = await Event.find();
-      res.status(200).json({ success: true, data: events });
-    } catch (error) {
-      res.status(400).json({ success: false, error: 'Failed to fetch events' });
-    }
-  } else {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
+    case 'GET':
+      try {
+        const events = await Event.find();
+        return res.status(200).json({ success: true, data: events });
+      } catch (error) {
+        return res.status(500).json({ success: false, error: 'Error fetching events' });
+      }
+
+    case 'DELETE':
+      try {
+        const { id } = req.query;
+        await Event.findByIdAndDelete(id); // Delete event by ID
+        return res.status(200).json({ success: true});
+      } catch (error) {
+        return res.status(500).json({ success: false, error: 'Error deleting event' });
+      }
+
+    default:
+      res.setHeader('Allow', ['POST', 'GET', 'DELETE']);
+      res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
