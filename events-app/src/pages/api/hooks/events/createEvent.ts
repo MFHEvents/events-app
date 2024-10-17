@@ -17,7 +17,7 @@ export const createEvent = async (
     try {
         await connectToDatabase();
 
-        let newEvent = new Event({
+        const newEvent = new Event({
             title,
             date,
             location,

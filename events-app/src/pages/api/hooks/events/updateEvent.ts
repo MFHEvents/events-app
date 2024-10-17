@@ -5,7 +5,9 @@ import { FlattenMaps } from "mongoose";
 export const updateEvent = async (
     updatedEvent: IEvent
 ) => {
-    let updateEventRespnse: any;
+    let updateEventRespnse:
+      | (FlattenMaps<IEvent> & Required<{ _id: FlattenMaps<unknown> }>)
+      | null = null;
     let errorMsg: string | undefined = undefined;
 
     try {
