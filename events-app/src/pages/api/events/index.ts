@@ -2,21 +2,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createEvent } from '../hooks/events/createEvent';
 import { getAllEvents } from '../hooks/events/getAllEvents';
-import { z } from 'zod';
+import { eventBodySchema } from '../validation/validateEvent';
 
-// schema for validating body fields
-export const eventBodySchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  date: z.string().refine((value) => !isNaN(Date.parse(value)), {
-    message: "Invalid date format",
-  }),
-  location: z.string().min(1, "Location is required"),
-  fee: z.number().optional(),
-  summary: z.string().min(1, "Summary is required"),
-  description: z.string().min(1, "Description is required"),
-  isRecurring: z.boolean().optional(),
-  photoUrl: z.string().url().optional(), 
-});
+import { z } from 'zod';
 
 export default async function handler(
   req: NextApiRequest,
@@ -44,8 +32,8 @@ export default async function handler(
         }
       }
 
-      const {title, date, location, fee, summary, description, isRecurring, photoUrl } = req.body
-      const {createEventRespnse, errorMsg} = await createEvent(title, date, location, description, summary, isRecurring, fee, photoUrl);
+      const {title, date, location, fee, summary, description, isRecurring, photoUrl, recurrencePattern } = req.body
+      const {createEventRespnse, errorMsg} = await createEvent(title, date, location, description, summary, isRecurring, fee, photoUrl, recurrencePattern);
 
       // if an error occured, send the error message
       if (errorMsg) {

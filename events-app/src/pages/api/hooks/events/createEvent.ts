@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/mongodb";
 import Event, { IEvent } from "@/models/Event";
+import { RecurrencePattern } from "@/constants/constants";
 
 export const createEvent = async (
     title: string,
@@ -9,7 +10,8 @@ export const createEvent = async (
     summary: string,
     isRecurring: boolean,
     fee?: number,
-    photoUrl?: string
+    photoUrl?: string,
+    recurrencePattern?: RecurrencePattern
 ) => {
     let createEventRespnse: IEvent | undefined = undefined;
     let errorMsg: string | undefined = undefined;
@@ -25,7 +27,8 @@ export const createEvent = async (
             summary,
             isRecurring,
             fee,
-            photoUrl
+            photoUrl,
+            recurrencePattern
         })
 
         createEventRespnse = await newEvent.save();

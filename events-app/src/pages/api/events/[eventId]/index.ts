@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getEvent } from "../../hooks/events/getEvent";
-import { eventBodySchema } from "..";
+import { extendEventBodySchema } from "../../validation/validateEvent";
 import mongoose from "mongoose";
 import { z } from 'zod';
 import { updateEvent } from "../../hooks/events/updateEvent";
 
-export const eventBodyWithIdSchema = eventBodySchema.extend({
-    _id: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), {
-      message: "_id not provided or format is invalid.",
-    })
-  });
+export const eventBodyWithIdSchema = extendEventBodySchema({
+  _id: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), {
+    message: "_id not provided or format is invalid.",
+  }),
+});
 
 export default async function handler(
   req: NextApiRequest,
