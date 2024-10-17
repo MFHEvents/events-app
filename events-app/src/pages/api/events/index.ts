@@ -5,7 +5,7 @@ import { getAllEvents } from '../hooks/events/getAllEvents';
 import { z } from 'zod';
 
 // schema for validating body fields
-const eventBodySchema = z.object({
+export const eventBodySchema = z.object({
   title: z.string().min(1, "Title is required"),
   date: z.string().refine((value) => !isNaN(Date.parse(value)), {
     message: "Invalid date format",

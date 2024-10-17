@@ -10,8 +10,8 @@ export const getAllEvents = async () => {
         getEventsResponse = await Event.find(); 
 
     } catch (error) {
-        console.error('Error saving event:', error);
-        errorMsg = `Error saving event: ${error}`
+        console.error('Error getting events:', error);
+        errorMsg = `Error getting events: ${error}`
     }
 
     return {getEventsResponse, errorMsg}
