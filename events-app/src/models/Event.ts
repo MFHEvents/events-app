@@ -25,8 +25,7 @@ const EventSchema: Schema<IEvent> = new Schema({
     description: { type: String, required: true },
     isRecurring: { type: Boolean, required: false },
     recurrencePattern: {
-        type: String,
-        enum: Object.values(RecurrencePattern),
+        type: Schema.Types.Mixed, // Use Mixed to allow different recurrence patterns. verification will be done before adding to db
         required: false
     },
     registeredAttendees: [{
