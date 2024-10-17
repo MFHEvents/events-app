@@ -12,35 +12,38 @@ export default async function handler(
 ): Promise<void> {
   switch (req.method) {
     case "GET": {
-      const {getEventsResponse, errorMsg} = await getAllEvents();
+      try {
+        const {getEventsResponse} = await getAllEvents();
 
-      // if an error occured, send the error message
-      if (errorMsg) {
-        return res.status(500).json({ success: false, error: errorMsg })
-      } else {
         // no error, create event successful
         return res.status(200).json({ success: true, data: getEventsResponse })
+        
+      } catch (err: any) {
+        console.error("Error getting events:", err.message);
+        return res.status(500).json({ success: false, error: `Failed to get events. ${err.message}` });
       }
     }
 
     case "POST": {
       try {
-        eventBodySchema.parse(req.body); // Validate req.body
-      } catch (err) {
-        if (err instanceof z.ZodError) {
-          return res.status(400).json({ success: false, error: err.issues })
-        }
-      }
+        //validate req.body
+        eventBodySchema.parse(req.body);
 
-      const {title, date, location, fee, summary, description, isRecurring, photoUrl, recurrencePattern } = req.body
-      const {createEventRespnse, errorMsg} = await createEvent(title, date, location, description, summary, isRecurring, fee, photoUrl, recurrencePattern);
+        const {title, date, location, fee, summary, description, isRecurring, photoUrl, recurrencePattern } = req.body
+        const {createEventRespnse} = await createEvent(title, date, location, description, summary, isRecurring, fee, photoUrl, recurrencePattern);
 
-      // if an error occured, send the error message
-      if (errorMsg) {
-        return res.status(500).json({ success: false, error: errorMsg })
-      } else {
-        // no error, create event successful
+        //no errors thrown
         return res.status(200).json({ success: true, data: createEventRespnse })
+
+      } catch (err: any) {
+        // Handle Zod validation error
+        if (err instanceof z.ZodError) {
+          return res.status(400).json({ success: false, errors: err.issues });
+        }
+
+        // Catch any other errors from createEvent
+        console.error("Error creating event:", err.message);
+        return res.status(500).json({ success: false, error: `Failed to create event. ${err.message}` });
       }
     }
 

@@ -21,51 +21,47 @@ export default async function handler(
 
       // invalid mongo id
       if (!mongoose.Types.ObjectId.isValid(eventId as string)) {
-        return res
-          .status(404)
-          .json({ success: false, error: "Event does not exist" });
+        return res.status(404).json({ success: false, error: "Invalid Event Id" });
       }
 
-      //get event from db
-      const { getEventResponse, errorMsg } = await getEvent(eventId as string);
+      try {
+        //get event from db
+        const { getEventResponse } = await getEvent(eventId as string);
 
-      if (errorMsg) {
-        return res.status(500).json({ success: false, error: errorMsg });
-      }
+        if (!getEventResponse) {
+          return res.status(404).json({ success: false, error: "Event does not exist" });
+        }
 
-      if (getEventResponse) {
         return res.status(200).json({ success: true, data: getEventResponse });
-      } else {
-        return res
-          .status(404)
-          .json({ success: false, error: "Event does not exist" });
+
+      } catch (err: any) {
+        return res.status(500).json({ success: false, error: `Failed to get event. ${err.message}` });
       }
     }
 
     case "PUT": {
       try {
-        eventBodyWithIdSchema.parse(req.body); // Validate body
-      } catch (err) {
-        if (err instanceof z.ZodError) {
-          return res.status(400).json({ success: false, error: err.issues });
-        }
-      }
+        //validate req.body
+        eventBodyWithIdSchema.parse(req.body);
 
-      const {updateEventRespnse, errorMsg} = await updateEvent(req.body);
+        const {updateEventRespnse} = await updateEvent(req.body);
 
-      // if an error occured, send the error message
-      if (errorMsg) {
-        return res.status(500).json({ success: false, error: errorMsg })
-      } else {
-        // no error, create event successful
+        //no errors thrown
         return res.status(200).json({ success: true, data: updateEventRespnse })
+
+      } catch (err: any) {
+        // Zod validation error
+        if (err instanceof z.ZodError) {
+          return res.status(400).json({ success: false, errors: err.issues });
+        }
+
+        console.error("Error updating event:", err.message);
+        return res.status(500).json({ success: false, error: `Failed to update event. ${err.message}` });
       }
     }
 
     default: {
-      return res
-        .status(405)
-        .json({ message: `Method ${req.method} Not Allowed` });
+      return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
   }
 }

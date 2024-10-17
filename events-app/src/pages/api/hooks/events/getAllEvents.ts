@@ -1,18 +1,14 @@
 import { connectToDatabase } from "@/lib/mongodb";
-import Event, { IEvent } from "@/models/Event";
+import Event from "@/models/Event";
 
 export const getAllEvents = async () => {
-    let getEventsResponse: IEvent[] = [];
-    let errorMsg: string | undefined = undefined;
-
     try {
         await connectToDatabase();
-        getEventsResponse = await Event.find(); 
+        const getEventsResponse = await Event.find(); 
+        return { getEventsResponse };
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error getting events:', error);
-        errorMsg = `Error getting events: ${error}`
+        throw new Error(error.message);
     }
-
-    return {getEventsResponse, errorMsg}
 }

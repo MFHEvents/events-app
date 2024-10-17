@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/mongodb";
-import Event, { IEvent } from "@/models/Event";
+import Event from "@/models/Event";
 import { RecurrencePattern } from "@/constants/constants";
 
 export const createEvent = async (
@@ -13,9 +13,6 @@ export const createEvent = async (
     photoUrl?: string,
     recurrencePattern?: RecurrencePattern
 ) => {
-    let createEventRespnse: IEvent | undefined = undefined;
-    let errorMsg: string | undefined = undefined;
-
     try {
         await connectToDatabase();
 
@@ -31,11 +28,11 @@ export const createEvent = async (
             recurrencePattern
         })
 
-        createEventRespnse = await newEvent.save();
-    } catch (error) {
-        console.error('Error saving event:', error);
-        errorMsg = `Error saving event: ${error}`
-    }
-    
-    return {createEventRespnse, errorMsg}
+        const createEventRespnse = await newEvent.save();
+        return { createEventRespnse };
+
+    } catch (error: any) {
+        console.error('Error creating event:', error);
+        throw new Error(error.message);
+    }    
 }
