@@ -32,26 +32,10 @@ Welcome to the MFH Events App, your one-stop solution for all the events happeni
 </div>
 
 ## Key Features
-<div style="display: flex; justify-content: space-between; margin: 5px 0;">
-  <div style="flex: 1; background-color: #1255e3; border: 2px solid #0066cc; border-radius: 10px; padding: 15px; margin-right: 10px;">
-    <h3 style="color: #fffff; margin-top: 0;">📅 View Events</h3>
-    <p>Calendar view of all events</p>
-  </div>
-  <div style="flex: 1; background-color: #1255e3; border: 2px solid #0066cc; border-radius: 10px; padding: 15px; margin-left: 10px;">
-    <h3 style="color: #ffff; margin-top: 0;">✅ Easy Registration</h3>
-    <p>Sign up for events with just one tap</p>
-  </div>
-</div>
-<div style="display: flex; justify-content: space-between; margin: 20px 0;">
-  <div style="flex: 1; background-color: #1255e3; border: 2px solid #0066cc; border-radius: 10px; padding: 15px; margin-right: 10px;">
-    <h3 style="color: #fffff; margin-top: 0;">👀 Track RSVPs</h3>
-    <p>Keep tabs on your registered events</p>
-  </div>
-  <div style="flex: 1; background-color: #1255e3; border: 2px solid #0066cc; border-radius: 10px; padding: 15px; margin-left: 10px;">
-    <h3 style="color: #fffff; margin-top: 0;">🚀 Share Events</h3>
-    <p>Spread the word to friends and family</p>
-  </div>
-</div>
+- 📅 **View Events**: Calendar view of all events
+- ✅ **Easy Registration**: Sign up for events with just one tap
+- 👀 **Track RSVPs**: Keep tabs on your registered events
+- 🚀 **Share Events**: Spread the word to friends and family
 
 ## Tech Stack
 **Now**, allow me introduce you to the amazing tech stack we are using to power this app.
