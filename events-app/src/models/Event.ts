@@ -12,7 +12,7 @@ export interface IEvent extends Document {
     isRecurring?: boolean;
     recurrencePattern?: RecurrencePattern;
     registeredAttendees?: Schema.Types.ObjectId[]; // Array of attendee IDs
-    photoUrl?: string;
+    imageId?: string //image id of uploaded image. //same as event id if image uploaded
 }
 
 // Define the schema for the Event
@@ -33,7 +33,7 @@ const EventSchema: Schema<IEvent> = new Schema({
         ref: 'Attendee',
         required: false
     }],
-    photoUrl: { type: String, required: false },
+    imageId: { type: String, required: false }
 });
 
 // Export the Event model (reuse if already defined)
