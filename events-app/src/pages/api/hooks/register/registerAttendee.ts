@@ -1,11 +1,13 @@
 import { connectToDatabase } from "@/lib/mongodb";
 import Attendee, { IAttendee } from "@/models/Attendee";
+import Event from "@/models/Event";
+import mongoose from "mongoose";
 
 export const registerAttendee = async (
     firstName: string,
     lastName: string,
     email: string,
-    registeredEvents?: string[]
+    eventId: string
 ) => {
     let attendeeResponse: IAttendee | null = null;
     let errorMsg: string | undefined = undefined;
@@ -13,11 +15,21 @@ export const registerAttendee = async (
 
     try {
         await connectToDatabase();
+        const mongoEventId = new mongoose.Types.ObjectId(eventId)
+
+        // Check if the event exists in the Event collection
+        const eventExists = await Event.exists({ _id: eventId });
+
+        if (!eventExists) {
+            throw new Error('Event does not exist.');
+        }
+
+        //to-do? throw err is attendee already registered
 
         const update = {
             firstName,
             lastName,
-            $addToSet: { registeredEvents: { $each: registeredEvents || [] } }
+            $addToSet: { registeredEvents: mongoEventId }
         };
 
         const options = {
@@ -37,7 +49,7 @@ export const registerAttendee = async (
 
     } catch (error) {
         console.error('Error upserting attendee:', error);
-        errorMsg = error instanceof Error ? error.message : 'An unknown error occurred';
+        errorMsg = error instanceof Error ? `Unable to register: ${error.message}` : 'An unknown error occurred';
     }
     
     return { attendeeResponse, errorMsg, isNewAttendee }
