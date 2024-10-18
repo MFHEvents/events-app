@@ -8,13 +8,12 @@ import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { FilterMatchMode } from 'primereact/api'
 import { Paginator } from 'primereact/paginator'
-import { IEvent } from '../../models/Event'
+import type { EventWithId } from '../../types'
 import { formatDate } from '../../lib/utils'
 import Header from '../../components/Header';
 
-
 export default function AdminPage() {
-    const [events, setEvents] = useState<IEvent[]>([])
+    const [events, setEvents] = useState<EventWithId[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [globalFilterValue, setGlobalFilterValue] = useState<string>('')
     const [filters, setFilters] = useState<DataTableFilterMeta>({
@@ -44,13 +43,13 @@ export default function AdminPage() {
     const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         let _filters = { ...filters };
-        _filters['global'] = { value, matchMode: FilterMatchMode.CONTAINS }; // Correct structure for filter
+        _filters['global'] = { value, matchMode: FilterMatchMode.CONTAINS };
 
         setFilters(_filters);
         setGlobalFilterValue(value);
     };
 
-    const statusBodyTemplate = (rowData: IEvent) => {
+    const statusBodyTemplate = (rowData: EventWithId) => {
         return (
             <span
                 className={`px-2 py-1 text-xs font-semibold rounded-full ${rowData.isRecurring ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
@@ -61,11 +60,11 @@ export default function AdminPage() {
         )
     }
 
-    const feeBodyTemplate = (rowData: IEvent) => {
+    const feeBodyTemplate = (rowData: EventWithId) => {
         return rowData.fee ? `$${rowData.fee}` : 'Free'
     }
 
-    const dateBodyTemplate = (rowData: IEvent) => {
+    const dateBodyTemplate = (rowData: EventWithId) => {
         return formatDate(rowData.date)
     }
 
@@ -92,6 +91,23 @@ export default function AdminPage() {
     }
 
     const header = renderHeader()
+
+    const editEvent = (eventId: string) => {
+        // Navigate to the edit page with the selected event ID
+        router.push(`/admin/edit/${eventId}`);
+    }
+
+    // Template for the "Edit" button in the actions column
+    const actionBodyTemplate = (rowData: EventWithId) => {
+        return (
+            <Button
+                label="Edit"
+                icon="pi pi-pencil"
+                className="p-button-sm p-button-rounded p-button-warning"
+                onClick={() => editEvent(rowData._id)} // Pass the event ID
+            />
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -127,6 +143,7 @@ export default function AdminPage() {
                         <Column field="location" header="Location" sortable style={{ minWidth: '10rem' }} />
                         <Column field="fee" header="Fee" body={feeBodyTemplate} sortable style={{ minWidth: '8rem' }} />
                         <Column field="isRecurring" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '8rem' }} />
+                        <Column header="Actions" body={actionBodyTemplate} style={{ minWidth: '8rem' }} /> {/* Edit button column */}
                     </DataTable>
 
                     <Paginator
