@@ -7,6 +7,7 @@ export interface IAttendee extends Document {
   lastName: string;
   email: string;
   registeredEvents?: Schema.Types.ObjectId[];
+  passwordHash?: string;
 }
 
 // Define the schema for the Attendee
@@ -19,6 +20,7 @@ const AttendeeSchema: Schema<IAttendee> = new Schema({
     ref: 'Event',
     required: false 
    }],
+   passwordHash: { type: String, required: false, select: false }, //don't return field by default
 });
 
 // Post-findOneAndUpdate hook to automatically update Event's registeredAttendees array
