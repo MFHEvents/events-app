@@ -48,7 +48,7 @@ const baseEventBodySchema = z.object({
   summary: z.string().min(1, "Summary is required"),
   description: z.string().min(1, "Description is required"),
   isRecurring: z.boolean().optional(),
-  photoUrl: z.string().url().optional(),
+  imageId: z.string().optional(),
   recurrencePattern: z
     .union([
       DailyRecurrenceSchema,

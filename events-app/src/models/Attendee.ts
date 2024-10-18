@@ -1,4 +1,5 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
+import Event from './Event';
 
 // Define the interface for the Attendee document
 export interface IAttendee extends Document {
@@ -18,6 +19,25 @@ const AttendeeSchema: Schema<IAttendee> = new Schema({
     ref: 'Event',
     required: false 
    }],
+});
+
+// Post-findOneAndUpdate hook to automatically update Event's registeredAttendees array
+AttendeeSchema.post('findOneAndUpdate', async function(doc) {
+  if (doc && doc.registeredEvents.length > 0) {
+      try {
+          const eventId = doc.registeredEvents[doc.registeredEvents.length - 1]; // Get the most recent eventId
+          const attendeeId = doc._id;
+
+          // Add attendeeId to the Event's registeredAttendees array
+          await Event.findOneAndUpdate(
+              { _id: eventId },
+              { $addToSet: { registeredAttendees: attendeeId } }
+          );
+      } catch (error) {
+          console.error('Error updating Event with attendeeId:', error);
+          throw new Error('Failed to update Event with the attendeeId.');
+      }
+  }
 });
 
 // Export the Attendee model (reuse if already defined)

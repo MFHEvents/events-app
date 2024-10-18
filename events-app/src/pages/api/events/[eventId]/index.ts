@@ -4,12 +4,23 @@ import { extendEventBodySchema } from "../../validation/validateEvent";
 import mongoose from "mongoose";
 import { z } from 'zod';
 import { updateEvent } from "../../hooks/events/updateEvent";
+import { Form } from "..";
+
+import formidable from "formidable";
+import fs from "fs/promises";
+import { IEvent } from "@/models/Event";
 
 export const eventBodyWithIdSchema = extendEventBodySchema({
   _id: z.string().refine((id) => mongoose.Types.ObjectId.isValid(id), {
     message: "_id not provided or format is invalid.",
   }),
 });
+
+export const config = {
+  api: {
+      bodyParser: false,
+  },
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -41,10 +52,43 @@ export default async function handler(
 
     case "PUT": {
       try {
-        //validate req.body
-        eventBodyWithIdSchema.parse(req.body);
+        const form = formidable({ multiples: false,
+          keepExtensions: true,
+          maxFields: 10
+        });
+        
+        //parse formData fields
+        const formData: Promise<Form> = new Promise((resolve, reject) => {
+          form.parse(req, async (err, fields, files) => {
+            if (err) {
+              reject("error");
+            }
+            resolve({ fields, files });
+          });
+        });
+        const { fields, files } = await formData;
+        
+        console.log('ere')
 
-        const {updateEventRespnse} = await updateEvent(req.body);
+        // Clean up the fields: array of strings are returned from formidable. Save it as just the string
+        const cleanedFields = Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, Array.isArray(value) ? value[0] : value]));
+
+        //add image to the cleanedFields obj if provided
+        cleanedFields.image = files?.image?.[0];
+
+        //validate req.body
+        eventBodyWithIdSchema.parse(cleanedFields);
+
+        let imageBinary = undefined;
+        const imageType = files?.image?.[0].mimetype;
+        const imageName = files?.image?.[0].originalFilename;
+        if (cleanedFields.image){
+          imageBinary = await fs.readFile(cleanedFields.image.filepath);
+
+          await fs.unlink(cleanedFields.image.filepath); //delete the temp image from disk
+        }
+
+        const {updateEventRespnse} = await updateEvent(cleanedFields as IEvent, imageBinary, imageType, imageName);
 
         //no errors thrown
         return res.status(200).json({ success: true, data: updateEventRespnse })
