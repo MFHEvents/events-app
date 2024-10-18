@@ -14,9 +14,8 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Editor } from 'primereact/editor'
 import { Button } from 'primereact/button'
 import 'react-quill/dist/quill.snow.css';
-import { IEvent } from '../../models/Event'
+import {Event} from '../../types'
 import { RecurrenceFrequency, RecurrencePattern, Days, Months } from '@/constants/constants';
-import { title } from 'process';
 import { Nullable } from 'primereact/ts-helpers';
 import { Checkbox } from 'primereact/checkbox';
 
@@ -25,8 +24,8 @@ export default function CreateEventPage() {
     const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
 
-
     const [calDate, setCalDate] = useState<Nullable<Date>>(new Date())
+
     const [startTime, setStartTime] = useState<Nullable<Date>>()
     const [endTime, setEndTime] = useState<Nullable<Date>>()
     const [endDate, setEndDate] = useState<Nullable<Date>>()
@@ -34,22 +33,20 @@ export default function CreateEventPage() {
     const [recurringInterval, setRecurringInterval] = useState<Nullable<number | null>>()
     const [recurringType, setRecurringType] = useState<Nullable<string | null>>('')
     const [locationType, setLocationType] = useState('physical')
-    const [eventLocation, setEventLocation] = useState<string | undefined>('')
-    const [eventFee, setEventFee] = useState<Nullable<number | null>>()
-    const [eventTitile, setEventTitle] = useState<Nullable<string | null>>('')
-    const [eventDesc, setEventDesc] = useState<string | undefined>('')
-    const [eventSum, setEventSum] = useState<string | undefined>('')
-    const [photoUrl, setPhotoUrl] = useState<string | undefined>('')
+    const [eventLocation, setEventLocation] = useState('')
+    const [eventFee, setEventFee] = useState<Nullable<number>>()
+    const [eventTitile, setEventTitle] = useState('')
+    const [eventDesc, setEventDesc] = useState('')
+    const [eventSum, setEventSum] = useState('')
+
+    const [uploadedImg, setUploadedImg] = useState<File>()
 
     const [selectedDays, setSelectedDays] = useState<Days[]>([]);
     const [selectedDayOfMonth, setSelectedDayOfMonth] = useState<Nullable<number | null>>();
 
-
-
-    // Assuming you have a selected recurringType (e.g., from a dropdown) and other relevant data fields
-    const buildRecurrencePattern = (): RecurrencePattern | null => {
+    const buildRecurrencePattern = (): RecurrencePattern | undefined => {
         if(calDate == null || calDate == undefined){
-            return null;
+            return undefined;
         }
         switch (recurringType) {
             case RecurrenceFrequency.Daily: {
@@ -124,10 +121,9 @@ export default function CreateEventPage() {
 
             default:
                 // If no valid recurringType is selected, return null
-                return null;
+                return undefined;
         }
     };
-
 
     const daysOfWeekOptions = [
         { label: Days.Monday, value: Days.Monday },
@@ -138,7 +134,6 @@ export default function CreateEventPage() {
         { label: Days.Saturday, value: Days.Saturday },
         { label: Days.Sunday, value: Days.Sunday },
     ];
-
 
     const recurringTypeOptions = [
         { value: RecurrenceFrequency.Daily, label: RecurrenceFrequency.Daily },
@@ -168,9 +163,9 @@ export default function CreateEventPage() {
 
     const handleFileUpload = (e: any) => {
         console.log(e.files)
-        console.log(e.files[0].objectURL)
+        console.log(e.files[0])
         if (e.files && e.files.length > 0) {
-            setPhotoUrl(e.files[0].objectURL);
+            setUploadedImg(e.files[0]);
         };
     };
 
@@ -208,17 +203,16 @@ export default function CreateEventPage() {
 
     const submitEvent = async () => {
 
-        const eventDetails = {
+        const eventDetails: Event = {
             title: eventTitile,
-            date: calDate,
+            date: calDate || new Date ,
             location: eventLocation,
-            fee: eventFee,
+            fee: eventFee || undefined,
             summary: eventSum,
             description: eventDesc,
             isRecurring: isRecurringInput,
             recurrencePattern: buildRecurrencePattern(),
-            registeredAttendees: [],
-            photoUrl: photoUrl
+            image: uploadedImg
         };
 
         console.log(JSON.stringify(eventDetails))

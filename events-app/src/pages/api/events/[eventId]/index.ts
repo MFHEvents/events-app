@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import { z } from 'zod';
 import { updateEvent } from "../../hooks/events/updateEvent";
 import { Form } from "..";
-
 import formidable from "formidable";
 import fs from "fs/promises";
 import { IEvent } from "@/models/Event";

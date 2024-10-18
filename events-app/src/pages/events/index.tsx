@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import Header from '../../components/Header';
-import type { ChurchEvent } from '../../types';
 import {formatDate} from '../../lib/utils'
 import { IEvent } from '../../models/Event';
 
@@ -27,10 +26,6 @@ const Events = () => {
 }, [])
 
 
-  const cardHeader = (photoUrl: string) => (
-    <img alt="Event" src={photoUrl} className="w-full h-48 object-cover" />
-  );
-
   const cardFooter = (event: IEvent) => (
     <div className="flex justify-between items-center mt-4">
       <Button 
@@ -54,7 +49,6 @@ const Events = () => {
               key={event.id}
               title={event.title}
               subTitle={formatDate(event.date)}
-              header={event.photoUrl ? () => cardHeader(event.photoUrl!) : undefined}
               footer={() => cardFooter(event)}
               className="w-full shadow-md hover:shadow-lg transition-shadow"
             >

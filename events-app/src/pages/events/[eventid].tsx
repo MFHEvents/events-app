@@ -1,18 +1,18 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
+import Image from 'next/image';
 import { Button } from 'primereact/button';
-import type { ChurchEvent } from '../../types';
 import RegisterForEventModal from '@/components/RegisterForEventModal';
 import { formatDate } from '../../lib/utils'
-import { IEvent } from '../../models/Event';
+import { EventWithId } from '../../types';
 import DOMPurify from 'dompurify';
 import parse from 'html-react-parser';
 
 export default function EventDetailsPage() {
   const router = useRouter();
   const { eventid } = router.query;  // Get the event ID from the URL
-  const [event, setEvent] = useState<IEvent | undefined>(undefined);
+  const [event, setEvent] = useState<EventWithId | undefined>(undefined);
   const [isDialogVisible, setDialogVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -61,8 +61,8 @@ export default function EventDetailsPage() {
       {event && (
         <main className="container mx-auto p-8">
           <img
-            src={event?.photoUrl}
-            alt={event?.title}
+            src={`/api/events/${eventid}/image`}
+            alt={event.title}
             className="w-full h-64 object-cover mb-4 rounded-lg shadow-md"
             onError={(e) => {
               const target = e.target as HTMLImageElement;

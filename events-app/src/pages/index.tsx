@@ -1,44 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { TabView, TabPanel } from 'primereact/tabview';
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
-import Header from '@/components/Header';
-import { useRouter } from 'next/router';
-import { IEvent } from '../models/Event';
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { TabView, TabPanel } from 'primereact/tabview'
+import { Card } from 'primereact/card'
+import { Button } from 'primereact/button'
+import Header from '@/components/Header'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import type { EventWithId } from '../types'
 
 export default function HomePage() {
-    const router = useRouter();
-    const [loading, setLoading] = useState(true);
-    const [upcomingEvents, setUpcomingEvents] = useState<IEvent[]>([]);
-    const [pastEvents, setPastEvents] = useState<IEvent[]>([]);
+    const router = useRouter()
+    const [loading, setLoading] = useState(true)
+    const [upcomingEvents, setUpcomingEvents] = useState<EventWithId[]>([])
+    const [pastEvents, setPastEvents] = useState<EventWithId[]>([])
+    const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
 
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch('/api/events');
-                const data = await response.json();
+                const response = await fetch('/api/events')
+                const data = await response.json()
                 if (data.success) {
-                    const currentDate = new Date();
-                    // Filter events immediately after receiving them
+                    const currentDate = new Date()
                     const upcoming = data.data.filter(
-                        (event: IEvent) => new Date(event.date) >= currentDate
-                    );
+                        (event: EventWithId) => new Date(event.date) >= currentDate
+                    )
                     const past = data.data.filter(
-                        (event: IEvent) => new Date(event.date) < currentDate
-                    );
-                    
-                    setUpcomingEvents(upcoming);
-                    setPastEvents(past);
+                        (event: EventWithId) => new Date(event.date) < currentDate
+                    )
+                    setUpcomingEvents(upcoming)
+                    setPastEvents(past)
                 }
             } catch (error) {
-                console.error('Error fetching events:', error);
+                console.error('Error fetching events:', error)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
-        
-        fetchEvents();
-    }, []); // Empty dependency array since we only want to fetch once
+        }
+
+        fetchEvents()
+    }, [])
+
+    const handleImageError = (eventId: string) => {
+        setImageErrors(prev => ({ ...prev, [eventId]: true }))
+    }
 
     const formatDate = (date: Date) => {
         return new Intl.DateTimeFormat('en-US', {
@@ -48,22 +54,29 @@ export default function HomePage() {
             day: 'numeric',
             hour: 'numeric',
             minute: 'numeric'
-        }).format(new Date(date));
-    };
+        }).format(new Date(date))
+    }
 
-    const cardHeader = (imageUrl: string) => (
-        <img 
-            alt="Event" 
-            src={imageUrl} 
-            className="w-full h-48 object-cover"
-            onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "https://placehold.co/600x400";
-            }}
-        />
-    );
+    const cardHeader = (event: EventWithId) => (
+        <div className="relative w-full h-48">
+            {!imageErrors[event._id] ? (
+                <Image
+                    src={`/api/events/${event._id}/image`}
+                    alt={event.title}
+                    layout="fill"
+                    objectFit="cover"
+                    onError={() => handleImageError(event._id)}
+                    loading="lazy"
+                />
+            ) : (
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-500">Placeholder Image</span>
+                </div>
+            )}
+        </div>
+    )
 
-    const cardFooter = (event: IEvent) => (
+    const cardFooter = (event: EventWithId) => (
         <div className="flex justify-between items-center mt-4">
             <Button
                 label="View More"
@@ -73,7 +86,28 @@ export default function HomePage() {
                 onClick={() => router.push(`/events/${event._id}`)}
             />
         </div>
-    );
+    )
+
+    const renderEventCards = (events: EventWithId[]) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {events.map((event) => (
+                <Card
+                    key={event._id}
+                    title={event.title}
+                    subTitle={formatDate(event.date)}
+                    header={() => cardHeader(event)}
+                    footer={() => cardFooter(event)}
+                    className="w-full shadow-md hover:shadow-lg transition-shadow"
+                >
+                    <p>{event.summary}</p>
+                    <div className="flex items-center gap-2">
+                        <i className="pi pi-map-marker text-gray-500" />
+                        <span className="text-gray-500">{event.location}</span>
+                    </div>
+                </Card>
+            ))}
+        </div>
+    )
 
     return (
         <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f8f9fa' }}>
@@ -101,56 +135,24 @@ export default function HomePage() {
                     {!loading && (
                         <TabView>
                             <TabPanel header="Upcoming Events">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {upcomingEvents.length > 0 ? (
-                                        upcomingEvents.map(event => (
-                                            <Card
-                                                title={event.title}
-                                                subTitle={formatDate(event.date)}
-                                                header={event.photoUrl ? () => cardHeader(event.photoUrl!) : () => cardHeader("https://placehold.co/600x400")}
-                                                footer={() => cardFooter(event)}
-                                                className="w-full shadow-md hover:shadow-lg transition-shadow"
-                                            >
-                                                <p>{event.summary}</p>
-                                                <div className="flex items-center gap-2">
-                                                    <i className="pi pi-map-marker text-gray-500" />
-                                                    <span className="text-gray-500">{event.location}</span>
-                                                </div>
-                                            </Card>
-                                        ))
-                                    ) : (
-                                        <p className="text-center text-gray-600">No upcoming events at the moment.</p>
-                                    )}
-                                </div>
+                                {upcomingEvents.length > 0 ? (
+                                    renderEventCards(upcomingEvents)
+                                ) : (
+                                    <p className="text-center text-gray-600">No upcoming events at the moment.</p>
+                                )}
                             </TabPanel>
 
                             <TabPanel header="Past Events">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {pastEvents.length > 0 ? (
-                                        pastEvents.map(event => (
-                                            <Card
-                                                title={event.title}
-                                                subTitle={formatDate(event.date)}
-                                                header={event.photoUrl ? () => cardHeader(event.photoUrl!) : () => cardHeader("https://placehold.co/600x400")}
-                                                footer={() => cardFooter(event)}
-                                                className="w-full shadow-md hover:shadow-lg transition-shadow"
-                                            >
-                                                <p>{event.summary}</p>
-                                                <div className="flex items-center gap-2">
-                                                    <i className="pi pi-map-marker text-gray-500" />
-                                                    <span className="text-gray-500">{event.location}</span>
-                                                </div>
-                                            </Card>
-                                        ))
-                                    ) : (
-                                        <p className="text-center text-gray-600">No upcoming events at the moment.</p>
-                                    )}
-                                </div>
+                                {pastEvents.length > 0 ? (
+                                    renderEventCards(pastEvents)
+                                ) : (
+                                    <p className="text-center text-gray-600">No past events to display.</p>
+                                )}
                             </TabPanel>
                         </TabView>
                     )}
                 </section>
             </main>
         </div>
-    );
+    )
 }

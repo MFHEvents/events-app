@@ -4,7 +4,7 @@ import { Steps } from 'primereact/steps'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { Message } from 'primereact/message'
-import { IEvent } from '../models/Event';
+import { EventWithId } from '../types';
 
 
 interface UserInfo {
@@ -16,7 +16,7 @@ interface UserInfo {
 interface RegistrationModalProps {
   visible: boolean;
   onClose: () => void;
-  event: IEvent; 
+  event: EventWithId; 
 }
 
 export default function RegisterForEventModal({ visible, onClose, event }: RegistrationModalProps) {
