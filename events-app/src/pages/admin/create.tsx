@@ -14,7 +14,7 @@ import { InputTextarea } from 'primereact/inputtextarea'
 import { Editor } from 'primereact/editor'
 import { Button } from 'primereact/button'
 import 'react-quill/dist/quill.snow.css';
-import {Event} from '../../types'
+import { Event } from '../../types'
 import { RecurrenceFrequency, RecurrencePattern, Days, Months } from '@/constants/constants';
 import { Nullable } from 'primereact/ts-helpers';
 import { Checkbox } from 'primereact/checkbox';
@@ -45,7 +45,7 @@ export default function CreateEventPage() {
     const [selectedDayOfMonth, setSelectedDayOfMonth] = useState<Nullable<number | null>>();
 
     const buildRecurrencePattern = (): RecurrencePattern | undefined => {
-        if(calDate == null || calDate == undefined){
+        if (calDate == null || calDate == undefined) {
             return undefined;
         }
         switch (recurringType) {
@@ -100,7 +100,7 @@ export default function CreateEventPage() {
                     };
                     return monthMap[monthName] as Months;
                 };
-            
+
                 const startDateMonth = calDate?.toLocaleString('default', { month: 'long' });
                 const todayDateMonth = new Date().toLocaleString('default', { month: 'long' });
 
@@ -162,9 +162,9 @@ export default function CreateEventPage() {
     };
 
     const handleFileUpload = (e: any) => {
-        console.log(e.files)
-        console.log(e.files[0])
         if (e.files && e.files.length > 0) {
+            console.log(e.files)
+            console.log(e.files[0])
             setUploadedImg(e.files[0]);
         };
     };
@@ -205,7 +205,7 @@ export default function CreateEventPage() {
 
         const eventDetails: Event = {
             title: eventTitile,
-            date: calDate || new Date ,
+            date: calDate || new Date,
             location: eventLocation,
             fee: eventFee || undefined,
             summary: eventSum,
@@ -223,7 +223,7 @@ export default function CreateEventPage() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(eventDetails), 
+            body: JSON.stringify(eventDetails),
         });
         if (response.ok) {
             console.log('Event created successfully!');

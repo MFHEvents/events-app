@@ -126,11 +126,17 @@ export default function HomePage() {
                             label="View Events"
                             className="p-card-button"
                             style={{ backgroundColor: '#beb9e4', color: '#003e75', border: 'none' }}
+                            onClick={() => {
+                                const section = document.getElementById('viewEvents');
+                                if (section) {
+                                    section.scrollIntoView({ behavior: 'smooth' });
+                                }
+                            }}
                         />
                     </div>
                 </section>
 
-                <section className="container mx-auto p-4 mt-12">
+                <section id="viewEvents" className="container mx-auto p-4 mt-12">
                     <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: '#003e75' }}>Our Events</h2>
                     {!loading && (
                         <TabView>
