@@ -56,8 +56,22 @@ export const createEvent = async (
     }    
 }
 
-const uploadFile = async (fileBuffer: Buffer, bucket: GridFSBucket, fileName: string, filetype: string, customId: ObjectId) => {
-    return new Promise((resolve, reject) => {
+export const uploadFile = async (fileBuffer: Buffer, bucket: GridFSBucket, fileName: string, filetype: string, customId: ObjectId) => {
+    return new Promise(async (resolve, reject) => {
+        const db = mongoose.connection.db;
+
+        if (!db) {
+            throw new Error("mongoose db is undefined")
+        }
+
+        //update if file already exists
+        const existingFile = await db.collection('fs.files').findOne({ _id: customId });
+        
+        if (existingFile) {
+            await db.collection('fs.files').deleteOne({ _id: customId });
+            await db.collection('fs.chunks').deleteMany({ files_id: customId });
+        }
+        
         const uploadStream = bucket.openUploadStream(fileName, {
             contentType: filetype,
             id: customId

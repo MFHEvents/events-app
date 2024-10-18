@@ -14,7 +14,7 @@ export const config = {
   },
 };
 
-interface Form {
+export interface Form {
   fields: any,
   files: any
 }
@@ -72,7 +72,6 @@ export default async function handler(
         if (image){
           imageBinary = await fs.readFile(image.filepath);
 
-          console.log(Buffer.byteLength(imageBinary))
           await fs.unlink(image.filepath); //delete the temp image from disk
         }
 
