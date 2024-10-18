@@ -76,7 +76,7 @@ export default function RegisterForEventModal({ visible, onClose, event }: Regis
             firstName: userInfo.firstName,
             lastName: userInfo.lastName,
             email: userInfo.email,
-            registeredEvents: [event._id]  // Send the event ID
+            eventId: event._id
           }),
         });
 
