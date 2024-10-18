@@ -30,7 +30,7 @@ const Header = () => {
     },
     {
       label: 'Events',
-      icon: 'pi pi-fw pi-heart',
+      icon: 'pi pi-fw pi-star',
       url: '/events',
       template: itemTemplate
     },
@@ -43,7 +43,7 @@ const Header = () => {
     {
       label: 'Admin',
       icon: 'pi pi-fw pi-envelope',
-      url: '/contact',
+      url: '/admin',
       template: itemTemplate
     }
   ];
