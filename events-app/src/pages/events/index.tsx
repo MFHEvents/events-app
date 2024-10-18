@@ -4,67 +4,34 @@ import { Button } from 'primereact/button';
 import Header from '../../components/Header';
 import type { ChurchEvent } from '../../types';
 import {formatDate} from '../../lib/utils'
+import { IEvent } from '../../models/Event';
+
 
 const Events = () => {
-  const [events, setEvents] = useState<ChurchEvent[]>([]);
+  const [events, setEvents] = useState<IEvent[]>([]);
 
   useEffect(() => {
-    const mockEvents: ChurchEvent[] = [
-      {
-        id: 1,
-        title: 'Sunday Worship Service',
-        date: new Date('2024-10-20T10:00:00'),
-        description: 'Join us for our weekly worship service with special musical performance.',
-        summary: 'Hello there I am summary',
-        location: 'Main Sanctuary',
-        imageUrl: 'https://placehold.co/600x400'
-      },
-      {
-        id: 2,
-        title: 'Youth Group Meeting',
-        date: new Date('2024-10-22T18:30:00'),
-        description: 'Weekly youth group gathering with games, worship, and Bible study.',
-        summary: 'Hello there I am summary',
-        location: 'Youth Center',
-        imageUrl: 'https://placehold.co/600x400'
-      },
-      {
-        id: 3,
-        title: 'Community Outreach',
-        date: new Date('2024-10-25T09:00:00'),
-        description: 'Monthly community service event at the local food bank.',
-        summary: 'Hello there I am summary',
-        location: 'Community Center',
-        imageUrl: 'https://placehold.co/600x400'
-      },
-      {
-        id: 4,
-        title: 'Community Outreach',
-        date: new Date('2024-10-25T09:00:00'),
-        description: 'Monthly community service event at the local food bank.',
-        summary: 'Hello there I am summary',
-        location: 'Community Center',
-        imageUrl: 'https://placehold.co/600x400'
-      },
-      {
-        id: 5,
-        title: 'Community Outreach',
-        date: new Date('2024-10-25T09:00:00'),
-        description: 'Monthly community service event at the local food bank.',
-        summary: 'Hello there I am summary',
-        location: 'Community Center',
-        imageUrl: 'https://placehold.co/600x400'
-      }
-    ];
+    const fetchEvents = async () => {
+        try {
+            const response = await fetch('/api/events')
+            const data = await response.json()
+            if (data.success) {
+                console.log(data.data)
+                setEvents(data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching events:', error)
+        }
+    }
+    fetchEvents()
+}, [])
 
-    setEvents(mockEvents);
-  }, []);
 
-  const cardHeader = (imageUrl: string) => (
-    <img alt="Event" src={imageUrl} className="w-full h-48 object-cover" />
+  const cardHeader = (photoUrl: string) => (
+    <img alt="Event" src={photoUrl} className="w-full h-48 object-cover" />
   );
 
-  const cardFooter = (event: ChurchEvent) => (
+  const cardFooter = (event: IEvent) => (
     <div className="flex justify-between items-center mt-4">
       <Button 
         label="View More" 
@@ -87,7 +54,7 @@ const Events = () => {
               key={event.id}
               title={event.title}
               subTitle={formatDate(event.date)}
-              header={event.imageUrl ? () => cardHeader(event.imageUrl!) : undefined}
+              header={event.photoUrl ? () => cardHeader(event.photoUrl!) : undefined}
               footer={() => cardFooter(event)}
               className="w-full shadow-md hover:shadow-lg transition-shadow"
             >

@@ -13,6 +13,18 @@
   @tailwind utilities;
 }
 
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+p {
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+
 /* Add any custom styles here */
 body {
   margin: 0;
@@ -97,4 +109,28 @@ body {
 .p-card-button:hover {
   background-color: #beb9e4; 
   transform: translateY(-2px);
+}
+
+/* Calender */
+.p-calendar-large .p-inputtext, 
+.p-input-large .p-inputtext, 
+.p-dropdown-large .p-dropdown {
+    height: 40px; /* Increase the height */
+    font-size: 16px; /* Adjust font size */
+    padding: 10px; /* Add padding for better spacing */
+    width: 100%; /* Ensure full width */
+}
+
+.p-calendar-large .p-calendar {
+    width: 100%; /* Ensure the calendar component spans the full width */
+}
+
+.p-dropdown-large {
+    height: 40px; /* Make the dropdown larger */
+    font-size: 16px; /* Larger text for better readability */
+}
+
+.p-input-large {
+    padding: 10px; /* Add more padding to the input for better spacing */
+    height: 40px; /* Increase the height of text inputs */
 }

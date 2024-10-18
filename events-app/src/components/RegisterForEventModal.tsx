@@ -1,10 +1,11 @@
-import React, { act, useState } from 'react'
+import React, {useState } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { Steps } from 'primereact/steps'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { Message } from 'primereact/message'
-import type { ChurchEvent } from '@/types'
+import { IEvent } from '../models/Event';
+
 
 interface UserInfo {
   firstName: string,
@@ -15,17 +16,16 @@ interface UserInfo {
 interface RegistrationModalProps {
   visible: boolean;
   onClose: () => void;
-  event: ChurchEvent; // Event object passed as prop
+  event: IEvent; 
 }
 
-export default function RegisterForEventModal({ visible, onClose, event } : RegistrationModalProps) {
+export default function RegisterForEventModal({ visible, onClose, event }: RegistrationModalProps) {
   const [activeStep, setActiveStep] = useState(0);
   const [userInfo, setUserInfo] = useState<UserInfo>({ firstName: '', lastName: '', email: '' })
 
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const [error, setError] = useState('')
 
@@ -64,18 +64,43 @@ export default function RegisterForEventModal({ visible, onClose, event } : Regi
   }
 
   const handleEventRegistrationSubmit = () => {
-    // Placeholder for registration logic
-    //API call to update Event Attendees  
 
-    console.log('Registration confirmed:', userInfo)
-    onClose();
-    // Reset state for next use
-    setActiveStep(0)
-    setUserInfo({ firstName: '', lastName: '', email: '' })
-    setIsGuest(false)
-    setLoginEmail('')
-    setLoginPassword('')
-    setError('')
+    const postRegistration = async () => {
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            email: userInfo.email,
+            registeredEvents: [event._id]  // Send the event ID
+          }),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          alert('Successfully registered!');
+          onClose();
+          // Reset state for next use
+          setActiveStep(0)
+          setUserInfo({ firstName: '', lastName: '', email: '' })
+          setIsGuest(false)
+          setLoginEmail('')
+          setLoginPassword('')
+          setError('')
+        } else {
+          const errorData = await response.json();
+          alert(`Registration failed: ${errorData.error}`);
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        alert('An error occurred while registering.');
+      }
+    }
+    postRegistration()
   }
 
   const renderLoginStep = () => (

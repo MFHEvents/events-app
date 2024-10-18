@@ -11,6 +11,8 @@
   "dependencies": {
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dompurify": "^3.1.7",
+    "html-react-parser": "^5.1.18",
     "lucide-react": "^0.453.0",
     "mongoose": "^8.7.1",
     "next": "14.2.15",
@@ -19,11 +21,13 @@
     "primereact": "^10.8.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-quill": "^2.0.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -1,4 +1,3 @@
-// pages/api/attendees/index.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { registerAttendee } from '../hooks/register/registerAttendee';
 import { getAllAttendees } from '../hooks/register/getAttendees';
