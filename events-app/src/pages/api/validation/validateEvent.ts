@@ -47,7 +47,7 @@ const baseEventBodySchema = z.object({
   fee: z.number().optional(),
   summary: z.string().min(1, "Summary is required"),
   description: z.string().min(1, "Description is required"),
-  isRecurring: z.boolean().optional(),
+  isRecurring: z.union([z.boolean(), z.string()]).optional(),
   imageId: z.string().optional(),
   recurrencePattern: z
     .union([

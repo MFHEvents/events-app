@@ -60,7 +60,7 @@ export default async function handler(
 
         //add image to the cleanedFields obj if provided
         cleanedFields.image = files?.image?.[0];
-        
+
         //validate req body
         eventBodySchema.parse(cleanedFields);
 
@@ -83,6 +83,7 @@ export default async function handler(
       } catch (err: any) {
         // Handle Zod validation error
         if (err instanceof z.ZodError) {
+          console.log(err.issues)
           return res.status(400).json({ success: false, errors: err.issues });
         }
 

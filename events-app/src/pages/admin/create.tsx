@@ -202,6 +202,12 @@ export default function CreateEventPage() {
     }
 
     const submitEvent = async () => {
+        let formData = new FormData();
+
+        // download actual image
+        //@ts-ignore
+        const res = await fetch(uploadedImg.objectURL);
+        const blob = await res.blob();
 
         const eventDetails: Event = {
             title: eventTitile,
@@ -210,20 +216,24 @@ export default function CreateEventPage() {
             fee: eventFee || undefined,
             summary: eventSum,
             description: eventDesc,
-            isRecurring: isRecurringInput,
+            isRecurring: isRecurringInput ? isRecurringInput : undefined,
             recurrencePattern: buildRecurrencePattern(),
-            image: uploadedImg
         };
 
-        console.log(JSON.stringify(eventDetails))
-        console.log(eventDetails)
+        //add eventdetails to formdata
+        Object.entries(eventDetails).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+              formData.append(key, value);
+            }
+          });
+
+          if (blob) {
+            formData.append('image', blob);
+          }
 
         const response = await fetch('/api/events', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(eventDetails),
+            body: formData, 
         });
         if (response.ok) {
             console.log('Event created successfully!');
