@@ -57,14 +57,14 @@ Welcome to the MFH Events App, your one-stop solution for all the events happeni
 
 Ready to dive in? Let's get your development environment up and running!
 
-### 📋 Prerequisites
+### Prerequisites
 
 Before you start, make sure you have:
 
 - 🍃 MongoDB URI
 - 📦 Node.js installed on your machine
 
-### 🛠️ Setup Steps
+### Setup Steps
 
 1. **Clone the Repository**
    ```bash
