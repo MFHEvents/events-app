@@ -4,6 +4,8 @@ import Header from '@/components/Header';
 import { Button } from 'primereact/button';
 import type { ChurchEvent } from '../../types';
 import RegisterForEventModal from '@/components/RegisterForEventModal';
+import {formatDate} from '../../lib/utils'
+
 
 
 const mockEvents = [
@@ -60,17 +62,6 @@ export default function EventDetailsPage() {
     const { eventid } = router.query;  // Get the event ID from the URL
     const [event, setEvent] = useState<ChurchEvent | undefined>(undefined);
     const [isDialogVisible, setDialogVisible] = useState(false);
-
-    const formatDate = (date: Date) => {
-        return new Intl.DateTimeFormat('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric'
-        }).format(new Date(date));
-    };
 
     // Fetch event details based on event ID (mock data in this case)
     useEffect(() => {

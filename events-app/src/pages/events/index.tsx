@@ -3,6 +3,7 @@ import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import Header from '../../components/Header';
 import type { ChurchEvent } from '../../types';
+import {formatDate} from '../../lib/utils'
 
 const Events = () => {
   const [events, setEvents] = useState<ChurchEvent[]>([]);
@@ -58,17 +59,6 @@ const Events = () => {
 
     setEvents(mockEvents);
   }, []);
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    }).format(date);
-  };
 
   const cardHeader = (imageUrl: string) => (
     <img alt="Event" src={imageUrl} className="w-full h-48 object-cover" />
